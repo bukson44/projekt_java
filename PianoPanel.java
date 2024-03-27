@@ -60,7 +60,7 @@ public class PianoPanel extends JPanel{
 				tone[i]=new JButton(tone_name[i]);
 				tone[i].setPreferredSize(new Dimension(button_x,button_y));
 				tone[i].setForeground(Color.white);
-				tone[i].setBackground(Color.black);
+				tone[i].setBackground(Color.blue);
 				panel[i]=new JPanel();
 				panel[i].setSize(button_x,button_y);
 				panel[i].add(tone[i]);
