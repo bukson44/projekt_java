@@ -1,11 +1,18 @@
-package projekt;
+package projekt2;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -15,11 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import javax.swing.border.Border;
 
 public class PianoSimulator extends JFrame implements ActionListener {
     private final int SIZE_X = 1000;
@@ -27,8 +30,9 @@ public class PianoSimulator extends JFrame implements ActionListener {
     static final int SLIDER_MIN = 0;
     static final int SLIDER_MAX = 100;
     static final int SLIDER_INIT = 0;
+    Border border = BorderFactory.createLoweredBevelBorder();
 
-    
+  //zmienic na poprawny sposób startowania programu  
     public static void main(String[] args) {
         PianoSimulator pianoSimulator = new PianoSimulator();
         pianoSimulator.setVisible(true);
@@ -62,6 +66,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    //slider
 	    JSlider slider = new JSlider(JSlider.HORIZONTAL, SLIDER_MIN, SLIDER_MAX, SLIDER_INIT);
 	    slider.setSize(400, 200);
+	    rightPanel.setBorder(border);
 	    slider.setMajorTickSpacing(20);
 	    slider.setMinorTickSpacing(10);
 	    slider.setPaintTicks(true);
@@ -78,7 +83,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    rightPanel.add(simplePanel);
 	    
 	    //PANEL INTERWALOW
-	    JPanel intervalPanel = new JPanel(new GridLayout(4,1));
+	    JPanel intervalPanel = new JPanel(new GridLayout(6,1));
 	    
 	    
 	    JRadioButton intervalButton = new JRadioButton();
@@ -90,11 +95,29 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    //startingNoteLabel.setFont(new Font("Courier", Font.BOLD,10));
 	    intervalPanel.add(startingNoteLabel);
 	    
+	    String[] tone_name= {"C", "C#","D", "D#","E","F", "F#","G", "G#","A", "B","H"};
+		
+		JComboBox cb1 = new JComboBox(tone_name);
+		intervalPanel.add(cb1);
+	    
+	    
+	    
 	    //JComboBox box = new JComboBox();
 	    
 	    
 	    JLabel intervalLabel = new JLabel("Interwal ");
 	    intervalPanel.add(intervalLabel);
+	    
+	    
+	    
+	    String[] interval_name= {"pryma", "sekunda mała", "sekunda wielka", "tercja mała", "tercja wielka",
+	    		"kwarta czysta", "tryton", "kwinta czysta", "seksta mała", "seksta wielka", "septyma mała", 
+	    		"septyma wielka", "oktawa"};
+		
+		JComboBox cb2 = new JComboBox(interval_name);
+		intervalPanel.add(cb2);
+	   
+		
 	    
 	    JLabel emptyLabel = new JLabel("");
 	    intervalPanel.add(emptyLabel);
@@ -103,7 +126,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    rightPanel.add(intervalPanel);
 	    
 	    //PANEL AKORDOW
-	    JPanel chordPanel = new JPanel(new GridLayout(6,1));
+	    JPanel chordPanel = new JPanel(new GridLayout(8,1));
 	    
 	    JRadioButton chordButton = new JRadioButton();
 	    chordButton.setLabel("AKORDY");
@@ -112,12 +135,29 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    
 	    JLabel scaleLabel = new JLabel("Skala ");
 	    chordPanel.add(scaleLabel);
+	   
+		
+		JComboBox cb3 = new JComboBox(tone_name);
+		chordPanel.add(cb3);
 	    
 	    JLabel keyLabel = new JLabel("Tonacja ");
 	    chordPanel.add(keyLabel);
 	    
+	    String[] key = {"MINOR", "MAJOR"};
+	    JComboBox cb4 = new JComboBox(key);
+		chordPanel.add(cb4);
+	    
+	    
+	    
+	    
 	    JLabel triadLabel = new JLabel("Funkcja (triada harmoniczna) ");
 	    chordPanel.add(triadLabel);
+	    
+	    
+	    
+	   
+	    
+	    
 	    
 	    
 	    //PANEL TRIADY
@@ -167,9 +207,11 @@ public class PianoSimulator extends JFrame implements ActionListener {
     	JPanel leftPanel = new JPanel(new GridLayout(2, 1));
     	leftPanel.setSize(900,800);
     	PlotPanel plot = new PlotPanel();
+    	plot.setBorder(border);
     	plot.setBackground(Color.lightGray);
     	leftPanel.add(plot);
     	JPanel keyboardPanel = new JPanel(new GridLayout(2,1));
+    	keyboardPanel.setBorder(border);
     	PianoPanel semitonesKeyboard = new PianoPanel("semitones");
     	PianoPanel tonesKeyboard = new PianoPanel("tones");
     	keyboardPanel.add(semitonesKeyboard);
@@ -224,8 +266,8 @@ public class RadioListener implements ActionListener {
 //            case "Regular": generationMethod = GenerationMethod.REGULAR; break;
 //            case "Random": generationMethod = GenerationMethod.RANDOM; break;
 //        }
-        revalidate();
-        repaint();
+        //revalidate();
+        //repaint();
     }
 
 }
@@ -239,6 +281,7 @@ public void actionPerformed(ActionEvent e) {
 	// TODO Auto-generated method stub
 	
 }
-
-
 }
+
+
+
