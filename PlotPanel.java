@@ -1,4 +1,4 @@
-package projekt;
+package projekt2;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -34,8 +34,8 @@ public class PlotPanel extends JPanel {
 				Graphics2D g2d = (Graphics2D) g;
 			 	BasicStroke bs1 = new BasicStroke(2);
 			 	g2d.setStroke(bs1);
-			 	g.drawLine(685,31*i,685-10,31*i-4);
-			 	g.drawLine(685,31*i,685-10,31*i+4);
+			 	g.drawLine(680,31*i,680-10,31*i-4);
+			 	g.drawLine(680,31*i,680-10,31*i+4);
 			}
 			if(i==7)
 			{
@@ -43,7 +43,7 @@ public class PlotPanel extends JPanel {
 			 	BasicStroke bs1 = new BasicStroke(1);
 			 	g2d.setStroke(bs1);
 			}
-	    	g.drawLine(0,31*i,685,31*i);
+	    	g.drawLine(0,31*i,680,31*i);
 	    }	
 	}
 }
