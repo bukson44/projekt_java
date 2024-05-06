@@ -25,23 +25,27 @@ public class PlotChartPanel extends JPanel {
 
     double stroj = 440.0; // fixme angielska nazwa stroju czy jak
 
-    public void draw(String semitoneStr, String octaveStr) {
+    public void draw(String semitoneStr, String octaveStr, double level) {
         wave.clear();
 //        aimPanel.remove(chartPanel);
         aimPanel.repaint();
-        calculateWave(semitoneStr, octaveStr);
+        calculateWave(semitoneStr, octaveStr, level);
         makeLineGraph();
         render();
     }
 
-    private void calculateWave(String semitoneStr, String octaveStr) {
+    private void calculateWave(String semitoneStr, String octaveStr, Double level) {
 
         int semitone = semitoneToInt(semitoneStr);
         int octave = octaveToInt(octaveStr);
+//        int interval = intervalToInt(intervalStr); // fixme implement
         double frequency = stroj * Math.pow(2, (semitone / 12.0)) * Math.pow(2, octave);
 
         for (double i=0; i < 0.1; i+=0.0001) {
-            wave.add(i, Math.sin(i * Math.PI * 2 * frequency));
+            double sample = Math.sin(i * Math.PI * 2 * frequency);
+
+            sample *= level;
+            wave.add(i, sample);
         }
 
         System.out.println(wave);
@@ -109,7 +113,7 @@ public class PlotChartPanel extends JPanel {
     PlotChartPanel(JPanel aimPanel){
         this.aimPanel = aimPanel;
         wave = new XYSeries("seria 2");
-        calculateWave("A", "Razkreślna");
+        calculateWave("A", "Razkreślna", 1.0);
 
         makeLineGraph();
         aimPanel.add(chartPanel);
