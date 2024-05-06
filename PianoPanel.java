@@ -31,7 +31,7 @@ public class PianoPanel extends JPanel {//Jakub Bukowski
 
 		ActionListener toneListener = new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				System.out.println(event.getActionCommand() + " " + simulator.getChosenOctave());
+				simulator.play(event.getActionCommand());
 			}
 		};
 
@@ -43,8 +43,6 @@ public class PianoPanel extends JPanel {//Jakub Bukowski
 			panel = new JPanel[tone_name.length];
 			this.setSize(panel_width, buttonHeight);
 			this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-
-
 
 			for(int i=0; i<tone_name.length; i++) {
 				if(i==0) this.add(Box.createRigidArea(new Dimension(125, buttonHeight)));
@@ -88,25 +86,5 @@ public class PianoPanel extends JPanel {//Jakub Bukowski
 		}	
 	}
 
-//	void setFreq(String freqType){
-//		if(freqType=="tones freq")
-//		{
-//			frequencies[0] = Math.pow(2,((octave-1)*12+4-49)/12)*440;
-//			frequencies[1] = Math.pow(2,((octave-1)*12+6-49)/12)*440;
-//			frequencies[2] = Math.pow(2,((octave-1)*12+8-49)/12)*440;
-//			frequencies[3] = Math.pow(2,((octave-1)*12+9-49)/12)*440;
-//			frequencies[4] = Math.pow(2,((octave-1)*12+11-49)/12)*440;
-//			frequencies[5] = Math.pow(2,((octave-1)*12+13-49)/12)*440;
-//			frequencies[6] = Math.pow(2,((octave-1)*12+15-49)/12)*440;
-//		}
-//		else
-//		{
-//			frequencies[0] = Math.pow(2,((octave-1)*12+5-49)/12)*440;
-//			frequencies[1] = Math.pow(2,((octave-1)*12+7-49)/12)*440;
-//			frequencies[2] = Math.pow(2,((octave-1)*12+10-49)/12)*440;
-//			frequencies[3] = Math.pow(2,((octave-1)*12+12-49)/12)*440;
-//			frequencies[4] = Math.pow(2,((octave-1)*12+14-49)/12)*440;
-//		}
-//	}
 }
 

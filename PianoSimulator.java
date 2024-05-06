@@ -34,6 +34,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
     PlotChartPanel plotChartPanel;
 	PianoPanel semitonesKeyboard;
 	PianoPanel tonesKeyboard;
+	JPanel plotPanel;
 	JPanel keyboardPanel;
 
 	private String[] octaves = { "Subkontra", "Kontra", "Wielka", "Mała",
@@ -225,7 +226,8 @@ public class PianoSimulator extends JFrame implements ActionListener {
     	//WSZYSTKO POZOSTAŁE
 		JPanel leftPanel = new JPanel(new GridLayout(2, 1));
 		leftPanel.setSize(900,800);
-		plotChartPanel = new PlotChartPanel(leftPanel);
+		plotPanel = new JPanel(new GridLayout(1, 1));
+		plotChartPanel = new PlotChartPanel(plotPanel);
 		keyboardPanel = new JPanel(new GridLayout(2,1));
 
 		semitonesKeyboard = new PianoPanel("semitones", this);
@@ -236,6 +238,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 		keyboardPanel.add(tonesKeyboard);
 
 		this.getContentPane().add(leftPanel, java.awt.BorderLayout.CENTER);
+		leftPanel.add(plotPanel);
 		leftPanel.add(keyboardPanel);
 		this.add(leftPanel, layout);
     }
@@ -282,85 +285,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
     	   oktawy.add(chooseOct[i]);
 		   chooseOct[i].addActionListener(octaveListener);
        }
-
-//       ActionListener octListener1 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 1;
-//				tonesKeyboard.octave = 1;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[0].addActionListener(octListener1);
-//		ActionListener octListener2 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 2;
-//				tonesKeyboard.octave = 2;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[1].addActionListener(octListener2);
-//		ActionListener octListener3 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 3;
-//				tonesKeyboard.octave = 3;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[2].addActionListener(octListener3);
-//		ActionListener octListener4 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 4;
-//				tonesKeyboard.octave = 4;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[3].addActionListener(octListener4);
-//		ActionListener octListener5 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 5;
-//				tonesKeyboard.octave = 5;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[4].addActionListener(octListener5);
-//		ActionListener octListener6 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 6;
-//				tonesKeyboard.octave = 6;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[5].addActionListener(octListener6);
-//		ActionListener octListener7 = new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				semitonesKeyboard.octave = 7;
-//				tonesKeyboard.octave = 7;
-//				semitonesKeyboard.setFreq("semitones freq");
-//				tonesKeyboard.setFreq("tones freq");
-//			}
-//		};
-//		chooseOct[6].addActionListener(octListener7);
-       
        
         menu.add(oktawy);
         //menu.add(menuItem);
@@ -368,8 +292,12 @@ public class PianoSimulator extends JFrame implements ActionListener {
         this.setJMenuBar(menuBar);
     }
 
+	public void play(String semitone) {
+		plotChartPanel.drawWaveform(semitone, chosenOctave);
+	}
 
-public class RadioListener implements ActionListener {
+
+	public class RadioListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent arg0) {
 //        switch(arg0.getActionCommand()) {
@@ -382,12 +310,12 @@ public class RadioListener implements ActionListener {
 
 }
 
-enum GenerationMethod {
-    SIMPLE, INTERVAL, CHORD
-}
+	enum GenerationMethod {
+		SIMPLE, INTERVAL, CHORD
+	}
 
-@Override
-public void actionPerformed(ActionEvent e) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
 	// TODO Auto-generated method stub
 	
 }
