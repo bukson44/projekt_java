@@ -22,6 +22,7 @@ public class PlotChartPanel extends JPanel {
     XYSeriesCollection xySeriesCollection;
     ChartPanel chartPanel;
     JFreeChart lineGraph;
+    String mode = "POJEDYNCZE DZWIEKI";
 
     double stroj = 440.0; // fixme angielska nazwa stroju czy jak
 
@@ -40,32 +41,35 @@ public class PlotChartPanel extends JPanel {
         int octave = octaveToInt(octaveStr);
         int interval = intervalToInt(intervalStr); // fixme implement
         double frequency = stroj * Math.pow(2, (semitone / 12.0)) * Math.pow(2, octave);
-        double firstInterval = frequency * Math.pow(2, (interval / 12.0));
-        double secondInterval = frequency * Math.pow(2, (7 / 12.0));
+        double middleFrequency = 0.0;
+        double upperFrequency = 0.0;
+
+        if(mode == "INTERWALY") {
+             middleFrequency = frequency * Math.pow(2, (interval / 12.0));
+        } else if(mode == "AKORDY") {
+            if(chord == "MAJOR") {
+                middleFrequency = frequency * Math.pow(2, (4 / 12.0));
+            } else if(chord == "MINOR") {
+                middleFrequency = frequency * Math.pow(2, (3 / 12.0));
+            }
+            upperFrequency = frequency * Math.pow(2, (7 / 12.0));
         // it's always a fifth, unless you want implement diminished chords, etc.
+        }
 
         System.out.println("Base frequency: " + frequency);
-        System.out.println("Interval frequency: " + firstInterval);
-        System.out.println("Third frequency: " + secondInterval);
-
+        System.out.println("Interval frequency: " + middleFrequency);
+        System.out.println("Third frequency: " + upperFrequency);
 
         for (double i=0; i < 0.1; i+=0.0001) {
             double sample = Math.sin(i * Math.PI * 2 * frequency);
 
-            if(false) {
-                sample += Math.sin(i * Math.PI * 2 * firstInterval);
+            if(mode.equals("INTERWALY") || mode.equals("AKORDY")) {
+                sample += Math.sin(i * Math.PI * 2 * middleFrequency);
             }
 
-            if(chord.equals("MAJOR")) {
-                firstInterval = 4;
-                sample += Math.sin(i * Math.PI * 2 * firstInterval);
-                sample += Math.sin(i * Math.PI * 2 * secondInterval);
-            } else if(chord.equals("MINOR")) {
-                firstInterval = 3;
-                sample += Math.sin(i * Math.PI * 2 * firstInterval);
-                sample += Math.sin(i * Math.PI * 2 * secondInterval);
+            if(mode.equals("AKORDY")) {
+                    sample += Math.sin(i * Math.PI * 2 * upperFrequency);
             }
-
             sample *= level;
             wave.add(i, sample);
         }
@@ -158,15 +162,12 @@ public class PlotChartPanel extends JPanel {
         render();
      }
 
-    void setData(){
-    	 if(option==1){
-    		 
-    	 }
-    	 else if(option==2){
-    		 
-    	 }
-    	 else if(option==3){
-    		 
-    	 }
+    void setMode(String mode){
+    	 this.mode = mode;
+        System.out.println("Mode set to " + this.mode);
      }
+
+    String getMode() {
+        return this.mode;
+    }
 }

@@ -96,7 +96,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
 			public void stateChanged(ChangeEvent event) {
 				JSlider slider = (JSlider)event.getSource();
 				chosenLevel = (double)slider.getValue();
-				System.out.println(chosenLevel);
 				play();
 
 			}
@@ -105,7 +104,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 		slider.addChangeListener(sliderListener);
 	    
 
-	    JRadioButton simpleButton = new JRadioButton();
+	    JRadioButton simpleRadioButton = new JRadioButton();
 	    ActionListener simpleListener = new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent arg0) 
@@ -113,11 +112,11 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				plotChartPanel.option=1;
 			}	
 		};
-		simpleButton.addActionListener(simpleListener);
-	    simpleButton.setLabel("POJEDYNCZE DZWIEKI         ");
-	    simpleButton.setFont(new Font("Courier", Font.BOLD,20));
-	    simplePanel.add(simpleButton);
-	    simpleButton.setSelected(true);
+		simpleRadioButton.addActionListener(simpleListener);
+	    simpleRadioButton.setLabel("POJEDYNCZE DZWIEKI         ");
+	    simpleRadioButton.setFont(new Font("Courier", Font.BOLD,20));
+	    simplePanel.add(simpleRadioButton);
+	    simpleRadioButton.setSelected(true);
 	    rightPanel.add(simplePanel);
 	    
 	    // PANEL INTERWALOW
@@ -146,8 +145,8 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				chosenSemitoneForInterval = (String)cb.getSelectedItem();
 				// because it should be memoried independently of semitone for chords
 				chosenSemitone = chosenSemitoneForInterval;
-				System.out.println(chosenSemitone);
-				play();
+				if(plotChartPanel.getMode().equals("INTERWALY")) play();
+
 			}
 		};
 
@@ -169,8 +168,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent event) {
 				JComboBox cb = (JComboBox)event.getSource();
 				chosenInterval = (String)cb.getSelectedItem();
-				play();
-				System.out.println(chosenInterval);
+				if(plotChartPanel.getMode().equals("INTERWALY")) play();
 			}
 		};
 
@@ -210,9 +208,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				chosenSemitoneForChord = (String)cb.getSelectedItem();
 				// because it should be memoried independently of semitone for chords
 				chosenSemitone = chosenSemitoneForChord;
-				System.out.println(chosenSemitone);
-				play();
-			}
+			if(plotChartPanel.getMode().equals("AKORDY")) play();			}
 		};
 
 		cb3.addActionListener(soundForChordComboListener);
@@ -231,8 +227,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent event) {
 				JComboBox cb = (JComboBox)event.getSource(); // this is needeed for retrieving value of combo box
 				chosenChord = (String)cb.getSelectedItem();
-				System.out.println(chosenChord);
-				play();
+				if(plotChartPanel.getMode().equals("AKORDY")) play();
 			}
 		};
 
@@ -262,10 +257,22 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    
 	  //sic = simple, interval, chord
 	    ButtonGroup sicGroup = new ButtonGroup();
-	    sicGroup.add(simpleButton);
+	    sicGroup.add(simpleRadioButton);
 	    sicGroup.add(intervalRadioButton);
 	    sicGroup.add(chordRadioButton);
-	     
+
+		ActionListener radioGroupListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				plotChartPanel.setMode(e.getActionCommand());
+				play();
+			}
+		};
+
+		simpleRadioButton.addActionListener(radioGroupListener);
+		intervalRadioButton.addActionListener(radioGroupListener);
+		chordRadioButton.addActionListener(radioGroupListener);
+
 	    
 	    //TSD = tonika, subdominanta, dominanta
 	    ButtonGroup TSDGroup = new ButtonGroup();
@@ -274,7 +281,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    TSDGroup.add(DButton);
 	
 	    RadioListener radioListener = new RadioListener();
-	    simpleButton.addActionListener(radioListener);
+	    simpleRadioButton.addActionListener(radioListener);
 	    intervalRadioButton.addActionListener(radioListener);
 	    chordRadioButton.addActionListener(radioListener);
 	    
@@ -358,7 +365,9 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	// this version is used only by the keyboard in PianoPanel
 	public void play(String semitone) {
 		chosenSemitone = semitone;
-		plotChartPanel.draw(chosenSemitone, chosenOctave, chosenLevel / 100.0, chosenInterval, chosenChord);
+		if(plotChartPanel.getMode().equals("POJEDYNCZE DZWIEKI")) {
+			plotChartPanel.draw(chosenSemitone, chosenOctave, chosenLevel / 100.0, chosenInterval, chosenChord);
+		}
 	}
 
 	// maybe not needed
