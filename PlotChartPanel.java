@@ -17,10 +17,15 @@ public class PlotChartPanel extends JPanel {
 	String plotTitle = "fala akustyczna";
 	int option=1;
 	List<XYSeries> dataSet;
-     PlotChartPanel(JPanel aimPanel){
+
+    PlotChartPanel(JPanel aimPanel){
          XYSeries dataSet2= new XYSeries("seria 2");
 
-             for (double i=0; i <100; i+=0.05) dataSet2.add(i,Math.sin(i));
+         double frequency = 440.0;
+         // jednostką jest jedna sekunda
+             for (double i=0; i < 0.1; i+=0.0001) {
+                 dataSet2.add(i, Math.sin(i * Math.PI * 2 * frequency));
+             }
 
              XYSeriesCollection xySeriesCollection = new XYSeriesCollection(dataSet2); 
            
@@ -40,8 +45,8 @@ public class PlotChartPanel extends JPanel {
              ChartPanel chartPanel = new ChartPanel(lineGraph);
              aimPanel.add(chartPanel);
      }
-     
-     void setData(){
+
+    void setData(){
     	 if(option==1){
     		 
     	 }

@@ -25,22 +25,32 @@ import javax.swing.JSlider;
 import javax.swing.border.Border;
 
 public class PianoSimulator extends JFrame implements ActionListener {
-    private final int SIZE_X = 1000;
-    private final int SIZE_Y = 800;
-    static final int SLIDER_MIN = 0;
+    private final int SIZE_X = 1600;
+    private final int SIZE_Y = 1200;
+    static final int SLIDER_MIN = 0; // fixme static?
     static final int SLIDER_MAX = 100;
     static final int SLIDER_INIT = 0;
+
     PlotChartPanel plotChartPanel;
-    JMenuItem chooseOct[] = new JMenuItem[7];
-    PianoPanel semitonesKeyboard = new PianoPanel("semitones");
-    PianoPanel tonesKeyboard = new PianoPanel("tones");
+	PianoPanel semitonesKeyboard;
+	PianoPanel tonesKeyboard;
+	JPanel keyboardPanel;
+
+	private String[] octaves = { "Subkontra", "Kontra", "Wielka", "Mała",
+			"Razkreślna", "Dwukreślna", "Trzykreślna", "Czterokreślna"};
+
+	private String chosenOctave = octaves[4]; // domyśłlnie razkreślna
+	private static int chosenSemitone = 0;
+	// 0 to dźwięk A w danej oktawie
+	// G# to -1, A# to 1 itd.
+	// C to -9
+
     Border border = BorderFactory.createLoweredBevelBorder();
 
   //zmienic na poprawny sposób startowania programu  
     public static void main(String[] args) {
         PianoSimulator pianoSimulator = new PianoSimulator();
         pianoSimulator.setVisible(true);
-
     }
     
     public PianoSimulator() throws HeadlessException {
@@ -49,16 +59,15 @@ public class PianoSimulator extends JFrame implements ActionListener {
         createRightPanel(BorderLayout.EAST);
         createLeftPanel(BorderLayout.CENTER);
         createMenu();
-        //System.out.print(semitonesKeyboard.tone_name.length);
-        //System.out.print(semitonesKeyboard.tone_name[0]);
-        GenerationMethod generationMethod = GenerationMethod.SIMPLE;
 
+        GenerationMethod generationMethod = GenerationMethod.SIMPLE;
     }
 
-    
-   
 	void createRightPanel(String layout) {
-		
+		/**
+		 * @author Gabriela Danowska
+		 */
+
 		//CAŁY BOCZNY PANEL (PRAWY)
 		JPanel rightPanel = new JPanel(new GridLayout(3, 1));
 		rightPanel.setSize(500,400);
@@ -120,26 +129,19 @@ public class PianoSimulator extends JFrame implements ActionListener {
 		
 		JComboBox cb1 = new JComboBox(tone_name);
 		intervalPanel.add(cb1);
-	    
-	    
-	    
+
 	    //JComboBox box = new JComboBox();
-	    
-	    
+
 	    JLabel intervalLabel = new JLabel("Interwal ");
 	    intervalPanel.add(intervalLabel);
-	    
-	    
-	    
+
 	    String[] interval_name= {"pryma", "sekunda mała", "sekunda wielka", "tercja mała", "tercja wielka",
 	    		"kwarta czysta", "tryton", "kwinta czysta", "seksta mała", "seksta wielka", "septyma mała", 
 	    		"septyma wielka", "oktawa"};
 		
 		JComboBox cb2 = new JComboBox(interval_name);
 		intervalPanel.add(cb2);
-	   
-		
-	    
+
 	    JLabel emptyLabel = new JLabel("");
 	    intervalPanel.add(emptyLabel);
 	    
@@ -164,8 +166,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    
 	    JLabel scaleLabel = new JLabel("Skala ");
 	    chordPanel.add(scaleLabel);
-	   
-		
+
 		JComboBox cb3 = new JComboBox(tone_name);
 		chordPanel.add(cb3);
 	    
@@ -175,20 +176,10 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    String[] key = {"MINOR", "MAJOR"};
 	    JComboBox cb4 = new JComboBox(key);
 		chordPanel.add(cb4);
-	    
-	    
-	    
-	    
+
 	    JLabel triadLabel = new JLabel("Funkcja (triada harmoniczna) ");
 	    chordPanel.add(triadLabel);
-	    
-	    
-	    
-	   
-	    
-	    
-	    
-	    
+
 	    //PANEL TRIADY
 	    JPanel triadPanel = new JPanel(new GridLayout(3,1));
 	    
@@ -228,21 +219,23 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    
 	    this.add(rightPanel, layout);
 	}
-	
-	
+
 	void createLeftPanel(String layout) {
     	
     	//WSZYSTKO POZOSTAŁE
 		JPanel leftPanel = new JPanel(new GridLayout(2, 1));
 		leftPanel.setSize(900,800);
-		JPanel keyboardPanel = new JPanel(new GridLayout(2,1));
+		plotChartPanel = new PlotChartPanel(leftPanel);
+		keyboardPanel = new JPanel(new GridLayout(2,1));
+
+		semitonesKeyboard = new PianoPanel("semitones", this);
+		tonesKeyboard = new PianoPanel("tones", this);
+
 		keyboardPanel.setBorder(border);
-//		PianoPanel semitonesKeyboard = new PianoPanel("semitones");
-//		PianoPanel tonesKeyboard = new PianoPanel("tones");
 		keyboardPanel.add(semitonesKeyboard);
 		keyboardPanel.add(tonesKeyboard);
+
 		this.getContentPane().add(leftPanel, java.awt.BorderLayout.CENTER);
-		plotChartPanel = new PlotChartPanel(leftPanel); 
 		leftPanel.add(keyboardPanel);
 		this.add(leftPanel, layout);
     }
@@ -265,8 +258,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
                 "The only menu in this program that has menu items");
         menuBar.add(menu);
 
-
-
         menuItem = new JMenuItem("Wybierz język");
         menuItem.setMnemonic(KeyEvent.VK_B);
         menu.add(menuItem);
@@ -274,90 +265,101 @@ public class PianoSimulator extends JFrame implements ActionListener {
         menuItem = new JMenuItem("Kolor tła");
         menuItem.setMnemonic(KeyEvent.VK_B);
         menu.add(menuItem);
-        JMenu oktawy=new JMenu("Wybierz oktawę");
-        
-       for(int i =0;i<7;i++)
+        JMenu oktawy = new JMenu("Wybierz oktawę");
+
+		JMenuItem[] chooseOct = new JMenuItem[octaves.length];
+		ActionListener octaveListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chosenOctave = e.getActionCommand();
+				System.out.println(chosenOctave);
+			}
+		};
+
+       for(int i =0; i<octaves.length; i++)
        {
-    	   chooseOct[i] = new JMenuItem(Integer.toString(i+1));
+    	   chooseOct[i] = new JMenuItem(octaves[i]);
     	   oktawy.add(chooseOct[i]);
+		   chooseOct[i].addActionListener(octaveListener);
        }
-       ActionListener octListener1 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 1;
-				tonesKeyboard.octave = 1;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[0].addActionListener(octListener1);
-		ActionListener octListener2 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 2;
-				tonesKeyboard.octave = 2;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[1].addActionListener(octListener2);
-		ActionListener octListener3 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 3;
-				tonesKeyboard.octave = 3;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[2].addActionListener(octListener3);
-		ActionListener octListener4 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 4;
-				tonesKeyboard.octave = 4;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[3].addActionListener(octListener4);
-		ActionListener octListener5 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 5;
-				tonesKeyboard.octave = 5;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[4].addActionListener(octListener5);
-		ActionListener octListener6 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 6;
-				tonesKeyboard.octave = 6;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[5].addActionListener(octListener6);
-		ActionListener octListener7 = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				semitonesKeyboard.octave = 7;
-				tonesKeyboard.octave = 7;
-				semitonesKeyboard.setFreq("semitones freq");
-				tonesKeyboard.setFreq("tones freq");
-			}	
-		};
-		chooseOct[6].addActionListener(octListener7);
+
+//       ActionListener octListener1 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 1;
+//				tonesKeyboard.octave = 1;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[0].addActionListener(octListener1);
+//		ActionListener octListener2 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 2;
+//				tonesKeyboard.octave = 2;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[1].addActionListener(octListener2);
+//		ActionListener octListener3 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 3;
+//				tonesKeyboard.octave = 3;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[2].addActionListener(octListener3);
+//		ActionListener octListener4 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 4;
+//				tonesKeyboard.octave = 4;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[3].addActionListener(octListener4);
+//		ActionListener octListener5 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 5;
+//				tonesKeyboard.octave = 5;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[4].addActionListener(octListener5);
+//		ActionListener octListener6 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 6;
+//				tonesKeyboard.octave = 6;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[5].addActionListener(octListener6);
+//		ActionListener octListener7 = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				semitonesKeyboard.octave = 7;
+//				tonesKeyboard.octave = 7;
+//				semitonesKeyboard.setFreq("semitones freq");
+//				tonesKeyboard.setFreq("tones freq");
+//			}
+//		};
+//		chooseOct[6].addActionListener(octListener7);
        
        
         menu.add(oktawy);
@@ -389,4 +391,8 @@ public void actionPerformed(ActionEvent e) {
 	// TODO Auto-generated method stub
 	
 }
+
+	public String getChosenOctave() {
+		return chosenOctave;
+	}
 }
