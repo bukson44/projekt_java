@@ -41,10 +41,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 			"Razkreślna", "Dwukreślna", "Trzykreślna", "Czterokreślna"};
 
 	private String chosenOctave = octaves[4]; // domyśłlnie razkreślna
-	private static int chosenSemitone = 0;
-	// 0 to dźwięk A w danej oktawie
-	// G# to -1, A# to 1 itd.
-	// C to -9
+	private static String chosenSemitone = "A";
 
     Border border = BorderFactory.createLoweredBevelBorder();
 
@@ -275,7 +272,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				chosenOctave = e.getActionCommand();
-				System.out.println(chosenOctave);
+				play(chosenSemitone, chosenOctave);
 			}
 		};
 
@@ -293,7 +290,12 @@ public class PianoSimulator extends JFrame implements ActionListener {
     }
 
 	public void play(String semitone) {
-		plotChartPanel.drawWaveform(semitone, chosenOctave);
+		chosenSemitone = semitone;
+		plotChartPanel.draw(chosenSemitone, chosenOctave);
+	}
+
+	public void play(String semitone, String octave) {
+		plotChartPanel.draw(semitone, octave);
 	}
 
 

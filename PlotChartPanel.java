@@ -20,12 +20,17 @@ public class PlotChartPanel extends JPanel {
     XYSeries wave;
     JPanel aimPanel;
     XYSeriesCollection xySeriesCollection;
+    ChartPanel chartPanel;
+    JFreeChart lineGraph;
 
     double stroj = 440.0; // fixme angielska nazwa stroju czy jak
 
-    public void drawWaveform(String semitoneStr, String octaveStr) {
+    public void draw(String semitoneStr, String octaveStr) {
         wave.clear();
+//        aimPanel.remove(chartPanel);
+        aimPanel.repaint();
         calculateWave(semitoneStr, octaveStr);
+        makeLineGraph();
         render();
     }
 
@@ -44,11 +49,12 @@ public class PlotChartPanel extends JPanel {
         System.out.println(semitone + " " + octave);
     }
 
-    private void render() {
+    private void makeLineGraph() {
+
         xySeriesCollection = new XYSeriesCollection(wave);
         XYDataset dataset = xySeriesCollection;
 
-        JFreeChart lineGraph = ChartFactory.createXYLineChart
+        lineGraph = ChartFactory.createXYLineChart
                 ("",  // Title
                         "Czas [s]",           // X-Axis label
                         "Wychylenie z położenia równowagi",           // Y-Axis label
@@ -58,10 +64,11 @@ public class PlotChartPanel extends JPanel {
                         true,                // Show tooltips
                         false               //url show
                 );
+        chartPanel = new ChartPanel(lineGraph);
+    }
 
-
-        ChartPanel chartPanel = new ChartPanel(lineGraph);
-        aimPanel.add(chartPanel);
+    private void render() {
+        chartPanel.setChart(lineGraph);
     }
 
     private int semitoneToInt(String semitoneStr) {
@@ -102,6 +109,10 @@ public class PlotChartPanel extends JPanel {
     PlotChartPanel(JPanel aimPanel){
         this.aimPanel = aimPanel;
         wave = new XYSeries("seria 2");
+        calculateWave("A", "Razkreślna");
+
+        makeLineGraph();
+        aimPanel.add(chartPanel);
         render();
      }
 
