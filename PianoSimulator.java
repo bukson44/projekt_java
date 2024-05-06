@@ -43,8 +43,11 @@ public class PianoSimulator extends JFrame implements ActionListener {
 
 	private String chosenOctave = octaves[4]; // domyśłlnie razkreślna
 	private String chosenSemitone = "A";
-	private String chosenInterval = "pryma";
 	private double chosenLevel = SLIDER_INIT;
+	private String chosenSemitoneForInterval = "C";
+	private String chosenInterval = "pryma";
+	private String chosenSemitoneForChord = "C";
+	private String chosenChord = "MAJOR";
 
     Border border = BorderFactory.createLoweredBevelBorder();
 
@@ -94,7 +97,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				JSlider slider = (JSlider)event.getSource();
 				chosenLevel = (double)slider.getValue();
 				System.out.println(chosenLevel);
-				play(chosenSemitone, chosenOctave, chosenLevel / 100.0);
+				play();
 
 			}
 		};
@@ -117,94 +120,123 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	    simpleButton.setSelected(true);
 	    rightPanel.add(simplePanel);
 	    
-	    //PANEL INTERWALOW
+	    // PANEL INTERWALOW
 	    JPanel intervalPanel = new JPanel(new GridLayout(6,1));
 
-	    JRadioButton intervalButton = new JRadioButton();
-
-	    intervalButton.setLabel("INTERWALY");
-	    intervalButton.setFont(new Font("Courier", Font.BOLD,20));
-	    intervalPanel.add(intervalButton);
+		// radio interwałów
+	    JRadioButton intervalRadioButton = new JRadioButton();
+	    intervalRadioButton.setLabel("INTERWALY");
+	    intervalRadioButton.setFont(new Font("Courier", Font.BOLD,20));
+	    intervalPanel.add(intervalRadioButton);
 	    
 	    JLabel startingNoteLabel = new JLabel("Dzwiek poczatkowy ");
 	    //startingNoteLabel.setFont(new Font("Courier", Font.BOLD,10));
 	    intervalPanel.add(startingNoteLabel);
-	    
-	    String[] tone_name= {"C", "C#","D", "D#","E","F", "F#","G", "G#","A", "B","H"};
-		
-		JComboBox cb1 = new JComboBox(tone_name);
-		intervalPanel.add(cb1);
+
+	    String[] tone_names = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "B","H"};
+
+		// combo wybierania dźwięku początkowego (dolnego) dla interwału
+		JComboBox soundIntervalComboBox = new JComboBox(tone_names);
+		intervalPanel.add(soundIntervalComboBox);
 
 		ActionListener soundComboListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				JComboBox cb = (JComboBox)event.getSource();
-				chosenSemitone = (String)cb.getSelectedItem();
-
+				JComboBox cb = (JComboBox)event.getSource(); // this is needeed for retrieving value of combo box
+				chosenSemitoneForInterval = (String)cb.getSelectedItem();
+				// because it should be memoried independently of semitone for chords
+				chosenSemitone = chosenSemitoneForInterval;
 				System.out.println(chosenSemitone);
+				play();
 			}
 		};
 
-		cb1.addActionListener(soundComboListener);
+		soundIntervalComboBox.addActionListener(soundComboListener);
 
-
-	    JLabel intervalLabel = new JLabel("Interwal ");
+	    JLabel intervalLabel = new JLabel("Interwał");
 	    intervalPanel.add(intervalLabel);
 
 	    String[] interval_names = {"pryma", "sekunda mała", "sekunda wielka", "tercja mała", "tercja wielka",
 	    		"kwarta czysta", "tryton", "kwinta czysta", "seksta mała", "seksta wielka", "septyma mała", 
 	    		"septyma wielka", "oktawa"};
 		
-		JComboBox cb2 = new JComboBox(interval_names);
+		JComboBox intervalsComboBox = new JComboBox(interval_names);
 
-		intervalPanel.add(cb2);
+		intervalPanel.add(intervalsComboBox);
 
 		ActionListener intervalListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JComboBox cb = (JComboBox)event.getSource();
 				chosenInterval = (String)cb.getSelectedItem();
-
+				play();
 				System.out.println(chosenInterval);
 			}
 		};
 
-		cb2.addActionListener(intervalListener);
+		intervalsComboBox.addActionListener(intervalListener);
 
-	    JLabel emptyLabel = new JLabel("");
-	    intervalPanel.add(emptyLabel);
-	    
+//	    JLabel emptyLabel = new JLabel("");
+//	    intervalPanel.add(emptyLabel);
 	    
 	    rightPanel.add(intervalPanel);
 	    
 	    //PANEL AKORDOW
 	    JPanel chordPanel = new JPanel(new GridLayout(8,1));
 	    
-	    JRadioButton chordButton = new JRadioButton();
-	    ActionListener chordListener = new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				plotChartPanel.option=3;
-			}	
-		};
-		chordButton.addActionListener(chordListener);
-	    chordButton.setLabel("AKORDY");
-	    chordButton.setFont(new Font("Courier", Font.BOLD,20));
-	    chordPanel.add(chordButton);
+	    JRadioButton chordRadioButton = new JRadioButton();
+//	    ActionListener chordListener = new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent arg0)
+//			{
+//				plotChartPanel.option=3;
+//			}
+//		};
+//		chordRadioButton.addActionListener(chordListener);
+	    chordRadioButton.setLabel("AKORDY");
+	    chordRadioButton.setFont(new Font("Courier", Font.BOLD,20));
+	    chordPanel.add(chordRadioButton);
 	    
 	    JLabel scaleLabel = new JLabel("Skala ");
 	    chordPanel.add(scaleLabel);
 
-		JComboBox cb3 = new JComboBox(tone_name);
+		JComboBox cb3 = new JComboBox(tone_names);
 		chordPanel.add(cb3);
+
+		ActionListener soundForChordComboListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JComboBox cb = (JComboBox)event.getSource(); // this is needeed for retrieving value of combo box
+				chosenSemitoneForChord = (String)cb.getSelectedItem();
+				// because it should be memoried independently of semitone for chords
+				chosenSemitone = chosenSemitoneForChord;
+				System.out.println(chosenSemitone);
+				play();
+			}
+		};
+
+		cb3.addActionListener(soundForChordComboListener);
+
+
 	    
 	    JLabel keyLabel = new JLabel("Tonacja ");
 	    chordPanel.add(keyLabel);
 	    
-	    String[] key = {"MINOR", "MAJOR"};
+	    String[] key = {"MAJOR", "MINOR"};
 	    JComboBox cb4 = new JComboBox(key);
 		chordPanel.add(cb4);
+
+		ActionListener chordListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JComboBox cb = (JComboBox)event.getSource(); // this is needeed for retrieving value of combo box
+				chosenChord = (String)cb.getSelectedItem();
+				System.out.println(chosenChord);
+				play();
+			}
+		};
+
+		cb4.addActionListener(chordListener);
 
 	    JLabel triadLabel = new JLabel("Funkcja (triada harmoniczna) ");
 	    chordPanel.add(triadLabel);
@@ -231,8 +263,8 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	  //sic = simple, interval, chord
 	    ButtonGroup sicGroup = new ButtonGroup();
 	    sicGroup.add(simpleButton);
-	    sicGroup.add(intervalButton);
-	    sicGroup.add(chordButton);
+	    sicGroup.add(intervalRadioButton);
+	    sicGroup.add(chordRadioButton);
 	     
 	    
 	    //TSD = tonika, subdominanta, dominanta
@@ -243,8 +275,8 @@ public class PianoSimulator extends JFrame implements ActionListener {
 	
 	    RadioListener radioListener = new RadioListener();
 	    simpleButton.addActionListener(radioListener);
-	    intervalButton.addActionListener(radioListener);
-	    chordButton.addActionListener(radioListener);
+	    intervalRadioButton.addActionListener(radioListener);
+	    chordRadioButton.addActionListener(radioListener);
 	    
 	    this.add(rightPanel, layout);
 	}
@@ -303,12 +335,11 @@ public class PianoSimulator extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				chosenOctave = e.getActionCommand();
-				play(chosenSemitone, chosenOctave, chosenLevel);
+				play();
 			}
 		};
 
-       for(int i =0; i<octaves.length; i++)
-       {
+       for(int i =0; i<octaves.length; i++) {
     	   chooseOct[i] = new JMenuItem(octaves[i]);
     	   oktawy.add(chooseOct[i]);
 		   chooseOct[i].addActionListener(octaveListener);
@@ -320,13 +351,19 @@ public class PianoSimulator extends JFrame implements ActionListener {
         this.setJMenuBar(menuBar);
     }
 
+
+	public void play() {
+		plotChartPanel.draw(chosenSemitone, chosenOctave, chosenLevel / 100.0, chosenInterval, chosenChord);
+	}
+	// this version is used only by the keyboard in PianoPanel
 	public void play(String semitone) {
 		chosenSemitone = semitone;
-		plotChartPanel.draw(chosenSemitone, chosenOctave, chosenLevel);
+		plotChartPanel.draw(chosenSemitone, chosenOctave, chosenLevel / 100.0, chosenInterval, chosenChord);
 	}
 
+	// maybe not needed
 	public void play(String semitone, String octave, double level) {
-		plotChartPanel.draw(semitone, octave, level);
+		plotChartPanel.draw(semitone, octave, level / 100.0, chosenInterval, chosenChord);
 	}
 
 

@@ -25,32 +25,50 @@ public class PlotChartPanel extends JPanel {
 
     double stroj = 440.0; // fixme angielska nazwa stroju czy jak
 
-    public void draw(String semitoneStr, String octaveStr, double level) {
+    public void draw(String semitoneStr, String octaveStr, double level, String interval, String chord) {
         wave.clear();
 //        aimPanel.remove(chartPanel);
         aimPanel.repaint();
-        calculateWave(semitoneStr, octaveStr, level);
+        calculateWave(semitoneStr, octaveStr, level, interval, chord);
         makeLineGraph();
         render();
     }
 
-    private void calculateWave(String semitoneStr, String octaveStr, Double level) {
+    private void calculateWave(String semitoneStr, String octaveStr, Double level, String intervalStr, String chord) {
 
         int semitone = semitoneToInt(semitoneStr);
         int octave = octaveToInt(octaveStr);
-//        int interval = intervalToInt(intervalStr); // fixme implement
+        int interval = intervalToInt(intervalStr); // fixme implement
         double frequency = stroj * Math.pow(2, (semitone / 12.0)) * Math.pow(2, octave);
+        double firstInterval = frequency * Math.pow(2, (interval / 12.0));
+        double secondInterval = frequency * Math.pow(2, (7 / 12.0));
+        // it's always a fifth, unless you want implement diminished chords, etc.
+
+        System.out.println("Base frequency: " + frequency);
+        System.out.println("Interval frequency: " + firstInterval);
+        System.out.println("Third frequency: " + secondInterval);
+
 
         for (double i=0; i < 0.1; i+=0.0001) {
             double sample = Math.sin(i * Math.PI * 2 * frequency);
 
+            if(false) {
+                sample += Math.sin(i * Math.PI * 2 * firstInterval);
+            }
+
+            if(chord.equals("MAJOR")) {
+                firstInterval = 4;
+                sample += Math.sin(i * Math.PI * 2 * firstInterval);
+                sample += Math.sin(i * Math.PI * 2 * secondInterval);
+            } else if(chord.equals("MINOR")) {
+                firstInterval = 3;
+                sample += Math.sin(i * Math.PI * 2 * firstInterval);
+                sample += Math.sin(i * Math.PI * 2 * secondInterval);
+            }
+
             sample *= level;
             wave.add(i, sample);
         }
-
-        System.out.println(wave);
-
-        System.out.println(semitone + " " + octave);
     }
 
     private void makeLineGraph() {
@@ -110,10 +128,30 @@ public class PlotChartPanel extends JPanel {
         return octave;
     }
 
+    private int intervalToInt(String intervalStr) {
+        int interval = 0;
+        switch (intervalStr) {
+            case "pryma": interval = 0; break;
+            case "sekunda mała": interval = 1; break;
+            case "sekunda wielka": interval = 2; break;
+            case "tercja mała": interval = 3; break;
+            case "tercja wielka": interval = 4; break;
+            case "kwarta czysta": interval = 5; break;
+            case "tryton": interval = 6; break;
+            case "kwinta czysta": interval = 7; break;
+            case "seksta mała": interval = 8; break;
+            case "seksta wielka": interval = 9; break;
+            case "septyma mała": interval = 10; break;
+            case "septyma wielka": interval = 11; break;
+            case "oktawa": interval = 12; break;
+        }
+        return interval;
+    }
+
     PlotChartPanel(JPanel aimPanel){
         this.aimPanel = aimPanel;
         wave = new XYSeries("seria 2");
-        calculateWave("A", "Razkreślna", 1.0);
+        calculateWave("A", "Razkreślna", 1.0, "pryma", "MAJOR");
 
         makeLineGraph();
         aimPanel.add(chartPanel);

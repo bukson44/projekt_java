@@ -15,11 +15,8 @@ import javax.swing.JPanel;
 public class PianoPanel extends JPanel {//Jakub Bukowski
 	
 	JButton[] tone;
-	String[] tone_name;
 	JPanel[] panel;
-	String tone_type;
 	int panel_width=300;
-	int octave = 4;
 
 	private final int buttonWidth = 60;
 	private final int buttonHeight = 170;
