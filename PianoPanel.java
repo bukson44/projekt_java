@@ -82,6 +82,5 @@ public class PianoPanel extends JPanel {//Jakub Bukowski
 			}		
 		}	
 	}
-
 }
 

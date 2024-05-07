@@ -25,7 +25,7 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class PianoSimulator extends JFrame implements ActionListener {
+public class PianoSimulator extends JFrame /*implements ActionListener*/ {
     private final int SIZE_X = 1600;
     private final int SIZE_Y = 1200;
 	private static final int SLIDER_MIN = 0; // fixme static?
@@ -70,8 +70,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
         createRightPanel(BorderLayout.EAST);
         createLeftPanel(BorderLayout.CENTER);
         createMenu();
-
-        GenerationMethod generationMethod = GenerationMethod.SIMPLE;
     }
 
 	void createRightPanel(String layout) {
@@ -103,7 +101,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				JSlider slider = (JSlider)event.getSource();
 				chosenLevel = (double)slider.getValue();
 				play();
-
 			}
 		};
 		slider.addChangeListener(sliderListener);
@@ -143,7 +140,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				// because it should be memoried independently of semitone for chords
 				chosenSemitone = chosenSemitoneForInterval;
 				if(plotChartPanel.getMode().equals("INTERWALY")) play();
-
 			}
 		};
 		soundIntervalComboBox.addActionListener(soundComboListener);
@@ -165,9 +161,6 @@ public class PianoSimulator extends JFrame implements ActionListener {
 		};
 		intervalsComboBox.addActionListener(intervalListener);
 
-//	    JLabel emptyLabel = new JLabel("");
-//	    intervalPanel.add(emptyLabel);
-	    
 	    rightPanel.add(intervalPanel);
 	    
 	    //PANEL AKORDOW
@@ -195,7 +188,7 @@ public class PianoSimulator extends JFrame implements ActionListener {
 		};
 		soundChordComboBox.addActionListener(soundForChordComboListener);
 	    
-	    JLabel keyLabel = new JLabel("Tonacja ");
+	    JLabel keyLabel = new JLabel("Tonacja");
 	    chordPanel.add(keyLabel);
 	    
 	    String[] key = {"MAJOR", "MINOR"};
@@ -210,29 +203,11 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				if(plotChartPanel.getMode().equals("AKORDY")) play();
 			}
 		};
-
 		chordType.addActionListener(chordListener);
 
-	    JLabel triadLabel = new JLabel("Funkcja (triada harmoniczna) ");
-	    chordPanel.add(triadLabel);
-
-	    //PANEL TRIADY
-	    JPanel triadPanel = new JPanel(new GridLayout(3,1));
-	    
-	    JRadioButton TButton = new JRadioButton("TONIKA");
-	    triadPanel.add(TButton);
-	    
-	    JRadioButton SButton = new JRadioButton("SUBDOMINANTA");
-	    triadPanel.add(SButton);
-	    
-	    JRadioButton DButton = new JRadioButton("DOMINANTA");
-	    triadPanel.add(DButton);
-	    
-	    chordPanel.add(triadPanel);
-	    
 	    rightPanel.add(chordPanel);
 	    
-	  //sic = simple, interval, chord
+	  	//sic = simple, interval, chord
 	    ButtonGroup sicGroup = new ButtonGroup();
 	    sicGroup.add(simpleRadioButton);
 	    sicGroup.add(intervalRadioButton);
@@ -245,23 +220,10 @@ public class PianoSimulator extends JFrame implements ActionListener {
 				play();
 			}
 		};
-
 		simpleRadioButton.addActionListener(radioGroupListener);
 		intervalRadioButton.addActionListener(radioGroupListener);
 		chordRadioButton.addActionListener(radioGroupListener);
 
-	    
-	    //TSD = tonika, subdominanta, dominanta
-	    ButtonGroup TSDGroup = new ButtonGroup();
-	    TSDGroup.add(TButton);
-	    TSDGroup.add(SButton);
-	    TSDGroup.add(DButton);
-	
-	    RadioListener radioListener = new RadioListener();
-	    simpleRadioButton.addActionListener(radioListener);
-	    intervalRadioButton.addActionListener(radioListener);
-	    chordRadioButton.addActionListener(radioListener);
-	    
 	    this.add(rightPanel, layout);
 	}
 
@@ -347,28 +309,10 @@ public class PianoSimulator extends JFrame implements ActionListener {
 		}
 	}
 
-	public class RadioListener implements ActionListener {
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-//        switch(arg0.getActionCommand()) {
-//            case "Regular": generationMethod = GenerationMethod.REGULAR; break;
-//            case "Random": generationMethod = GenerationMethod.RANDOM; break;
-//        }
-        //revalidate();
-        //repaint();
-		}
-	}
-
 	// fixme this should be used instead of Strings
 	enum GenerationMethod {
 		SIMPLE, INTERVAL, CHORD
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	// TODO Auto-generated method stub
-	
-}
 
 	public String getChosenOctave() {
 		return chosenOctave;
